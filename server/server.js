@@ -17,14 +17,14 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+
+// Allow requests from the frontend running on localhost:5173
+app.use(cors({
+  origin: 'http://localhost:5173'
+}))
 
 // routes
-app.use('/users', users);
-
-app.get('/', (req, res) => {
-  res.send('Welcome to the User Management API');
-});
+app.use('/api/users', users);
 
 // connect to a Mongo Database and start the server
 mongoose.connect(mongoURL).then(() => {
