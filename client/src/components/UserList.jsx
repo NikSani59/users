@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { getAllUsers } from "../services/api";
+import { getAllUsers, deleteUser } from "../services/api";
+import { toast } from "react-hot-toast";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -12,7 +12,7 @@ const UserList = () => {
         const userData = await getAllUsers();
         setUsers(userData);
       } catch (err) {
-        setError(err);
+        toast.error(err.message || "Failed to fetch users");
       } finally {
         setLoading(false);
       }
@@ -21,8 +21,16 @@ const UserList = () => {
     fetchUsers();
   }, []);
 
+  const handleDelete = async (id) => {
+    try {
+      await deleteUser(id);
+      setUsers(users.filter((user) => user._id !== id));
+    } catch (err) {
+      toast.error(err.message || "Failed to delete user");
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <div>
@@ -31,6 +39,7 @@ const UserList = () => {
         {users.map((user) => (
           <li key={user._id}>
             {user.name} - {user.email} - {user.address}
+            <button onClick={() => handleDelete(user._id)}>Delete</button>
           </li>
         ))}
       </ol>
