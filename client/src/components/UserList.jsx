@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getAllUsers, deleteUser } from "../services/api";
 import { toast } from "react-hot-toast";
 
-const UserList = () => {
+const UserList = ({ onEditUser }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,6 +25,7 @@ const UserList = () => {
     try {
       await deleteUser(id);
       setUsers(users.filter((user) => user._id !== id));
+      toast.success("User deleted successfully");
     } catch (err) {
       toast.error(err.message || "Failed to delete user");
     }
@@ -39,7 +40,26 @@ const UserList = () => {
         {users.map((user) => (
           <li key={user._id}>
             {user.name} - {user.email} - {user.address}
-            <button onClick={() => handleDelete(user._id)}>Delete</button>
+            <button
+              onClick={() => onEditUser(user)}
+              style={{
+                marginLeft: "10px",
+                backgroundColor: "blue",
+                color: "white",
+              }}
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => handleDelete(user._id)}
+              style={{
+                marginLeft: "5px",
+                backgroundColor: "red",
+                color: "white",
+              }}
+            >
+              Delete
+            </button>
           </li>
         ))}
       </ol>
