@@ -30,6 +30,7 @@ export const createUser = async (data) => {
   }
 };
 
+// Update user details
 export const updateUser = async (id, data) => {
   try {
     const res = await fetch(`/api/users/${id}`, {
